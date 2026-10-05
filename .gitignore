@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Credenciales: nunca deben subirse al repositorio
+.env
+*service-account*.json
+credenciales*.json
+
+# Datos generados al probar localmente
+/tmp/
