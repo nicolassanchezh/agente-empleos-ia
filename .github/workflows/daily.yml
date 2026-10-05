@@ -1,0 +1,58 @@
+name: Digest diario de empleos
+
+on:
+  schedule:
+    # GitHub puede atrasar o saltarse ejecuciones programadas, así que corre en 3 horarios
+    # (1 principal + 2 de respaldo). No se duplican ofertas: seen_jobs.json filtra las ya
+    # enviadas y, si no hay nada nuevo, no se manda mail.
+    # Horas en UTC; Chile con horario de verano es UTC-3.
+    - cron: "17 11 * * 1-5"   # 08:17 Chile (principal)
+    - cron: "47 12 * * 1-5"   # 09:47 Chile (respaldo)
+    - cron: "23 14 * * 1-5"   # 11:23 Chile (respaldo)
+  workflow_dispatch: {}       # permite ejecutarlo a mano desde la pestaña Actions
+
+# Nunca corren dos ejecuciones a la vez: la siguiente espera y parte con seen_jobs.json actualizado.
+concurrency:
+  group: digest-diario
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # necesario para guardar seen_jobs.json en el repo
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar agente
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python job_agent.py
+
+      - name: Guardar empleos ya vistos
+        run: |
+          if [ ! -f seen_jobs.json ]; then
+            echo "No hay seen_jobs.json que guardar (no se procesaron empleos)."
+            exit 0
+          fi
+          git config user.name "job-agent-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add seen_jobs.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en seen_jobs.json."
+            exit 0
+          fi
+          git commit -m "Actualizar empleos vistos"
+          git pull --rebase origin main
+          git push
