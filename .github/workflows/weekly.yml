@@ -1,0 +1,37 @@
+name: Reflexion semanal
+
+on:
+  schedule:
+    - cron: "0 21 * * 5"   # viernes 18:00 hora de Chile (UTC-3, horario de verano)
+  workflow_dispatch:
+
+permissions:
+  contents: write   # necesario para commitear aprendizajes.md
+
+jobs:
+  reflect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Generar reflexión
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python reflect.py
+
+      - name: Guardar aprendizajes.md en el repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add aprendizajes.md 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Actualiza aprendizajes semanales" && git pull --rebase origin main && git push)
