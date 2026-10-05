@@ -1,0 +1,57 @@
+{
+  "perfil": {
+    "titulo_buscado": "Cargos que buscas (ej: Ingeniero/a de Software, Product Manager, Analista)",
+    "anios_experiencia": 3,
+    "seniority_deseado": "Semi-senior o Senior",
+    "skills_principales": [
+      "Skill 1",
+      "Skill 2",
+      "Skill 3"
+    ],
+    "skills_secundarias": [
+      "Skill 4",
+      "Inglés intermedio"
+    ],
+    "industrias_preferidas": [
+      "tecnología",
+      "retail"
+    ],
+    "modalidad": "Remoto, híbrido o presencial en tu ciudad",
+    "salario_minimo": "Opcional",
+    "descartar_si": [
+      "100% presencial fuera de tu ciudad",
+      "seniority junior/trainee"
+    ]
+  },
+  "rubrica_afinidad": {
+    "skills_tecnicos": 40,
+    "seniority_y_experiencia": 30,
+    "modalidad_y_ubicacion": 25,
+    "industria": 5
+  },
+  "umbral_minimo_para_incluir": 50,
+  "modelo": "claude-sonnet-4-6",
+  "email": {
+    "imap_server": "imap.gmail.com",
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "remitentes_alertas": [
+      "jobalerts-noreply@linkedin.com",
+      "jobs-noreply@linkedin.com"
+    ],
+    "destinatario_digest": "tu-email@gmail.com",
+    "dias_busqueda": 2
+  },
+  "feedback": {
+    "sheet_id": "ID_DE_TU_GOOGLE_SHEET",
+    "pestana_ofertas": "Ofertas",
+    "pestana_respuestas": "Respuestas de formulario 1",
+    "pestana_analizadas": "Analizadas",
+    "pestana_metricas": "Metricas",
+    "form_url": "https://docs.google.com/forms/d/e/ID_DE_TU_FORM/viewform",
+    "form_entry_job_id": "entry.0000000000",
+    "form_entry_oferta": "entry.0000000000",
+    "minimo_registros_reflexion": 8,
+    "enviar_reflexion_por_mail": true
+  }
+}
